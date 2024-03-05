@@ -7,9 +7,15 @@ import { inject, injectable } from 'inversify';
 import { IServer } from './interface';
 import helmet from 'helmet';
 import { TYPES } from '../../type';
+import { IWinstonLogger } from '../logger/interface';
+import { IHttpRouter } from '../../domain/interface';
 
 @injectable()
 export default class ExpressServer implements IServer {
+  @inject(TYPES.WinstonLogger) private logger: IWinstonLogger;
+  @inject(TYPES.ServerRouter) private serverRouter: IHttpRouter;
+  @inject(TYPES.UserRouter) private userRouter: IHttpRouter;
+
   private app: express.Application;
   private server: http.Server;
 
@@ -33,17 +39,20 @@ export default class ExpressServer implements IServer {
       response.send('Success');
     })
 
-    this.app.post('/send/chat/:serverName/:room', (request, response, next) => {
-      const { serverName, room } = request.params;
-      response.json({ Success: true });
-    })
+    this.serverRouter.init();
+    this.userRouter.init();
+
+    this.app.use('/server', this.serverRouter.getRouter());
+    this.app.use('/user', this.userRouter.getRouter());
 
 
+    // TODO: NotFound
+    // TODO: Error Handler
   }
 
   public start = (port: string) => {
     this.server.listen(port);
-    console.log(`Server on ${port}`);
+    this.logger.info(`Server on ${port}`);
   }
 
   public exit = () => {

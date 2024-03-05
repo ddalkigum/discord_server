@@ -23,8 +23,8 @@ model User {
   chats       Chat[]
   participate Participate[]
   createdAt   DateTime
-  updatedAt   DateTime
-  deletedAt   DateTime
+  updatedAt   DateTime?
+  deletedAt   DateTime?
 }
 
 model Participate {
@@ -46,34 +46,34 @@ model Server {
   chats       Chat[]
   participate Participate[]
   createdAt   DateTime
-  updatedAt   DateTime
-  deletedAt   DateTime
+  updatedAt   DateTime?
+  deletedAt   DateTime?
 }
 
 model Channel {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   type      String
-  owner     User     @relation(fields: [ownerId], references: [id])
-  ownerId   String   @db.ObjectId
-  server    Server   @relation(fields: [serverId], references: [id])
-  serverId  String   @db.ObjectId
+  owner     User      @relation(fields: [ownerId], references: [id])
+  ownerId   String    @db.ObjectId
+  server    Server    @relation(fields: [serverId], references: [id])
+  serverId  String    @db.ObjectId
   chats     Chat[]
   createdAt DateTime
-  updatedAt DateTime
-  deletedAt DateTime
+  updatedAt DateTime?
+  deletedAt DateTime?
 }
 
 model Chat {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
   content   String
-  sender    User     @relation(fields: [senderId], references: [id])
-  senderId  String   @db.ObjectId
-  server    Server   @relation(fields: [serverId], references: [id])
-  serverId  String   @db.ObjectId
-  channel   Channel  @relation(fields: [channelId], references: [id])
-  channelId String   @db.ObjectId
+  sender    User      @relation(fields: [senderId], references: [id])
+  senderId  String    @db.ObjectId
+  server    Server    @relation(fields: [serverId], references: [id])
+  serverId  String    @db.ObjectId
+  channel   Channel   @relation(fields: [channelId], references: [id])
+  channelId String    @db.ObjectId
   createdAt DateTime
-  updatedAt DateTime
-  deletedAt DateTime
+  updatedAt DateTime?
+  deletedAt DateTime?
 }

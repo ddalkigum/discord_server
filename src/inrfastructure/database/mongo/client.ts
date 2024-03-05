@@ -10,9 +10,11 @@ export default class MongoClient implements IMongoClient {
 
   private client: PrismaClient;
 
-  public init = async () => {
+  constructor() {
     this.client = new PrismaClient();
+  }
 
+  public init = async () => {
     await this.client.$connect();
     this.logger.info('===== Mongo DB Connected =====')
   }

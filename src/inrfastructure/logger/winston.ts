@@ -75,7 +75,6 @@ export default class WinstonLogger implements IWinstonLogger {
       );
     }
 
-    this.logger.info('Logger is initialized.');
     return true;
   }
 

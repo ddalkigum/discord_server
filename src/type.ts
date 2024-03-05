@@ -10,5 +10,10 @@ export const TYPES = {
   // Domain
   ChannelRouter: Symbol.for('ChannelRouter'),
   ChannelService: Symbol.for('ChannelService'),
-  ChannelRepository: Symbol.for('ChannelRepository')
+
+  ServerRouter: Symbol.for('ServerRouter'),
+  ServerService: Symbol.for('ServerService'),
+
+  UserRouter: Symbol.for('UserRouter'),
+  UserService: Symbol.for('UserService')
 }
