@@ -2,9 +2,10 @@ import { PrismaClient } from '@prisma/client';
 import { inject, injectable } from 'inversify';
 import { TYPES } from '../../../type';
 import { IWinstonLogger } from '../../logger/interface';
+import { IMongoClient } from './interface';
 
 @injectable()
-export default class MongoClient {
+export default class MongoClient implements IMongoClient {
   @inject(TYPES.WinstonLogger) private logger: IWinstonLogger;
 
   private client: PrismaClient;

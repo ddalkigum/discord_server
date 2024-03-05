@@ -10,12 +10,15 @@ import * as Channel from './domain/channel';
 import { IChannelService } from './domain/channel/interface';
 import { IWinstonLogger } from './inrfastructure/logger/interface';
 import WinstonLogger from './inrfastructure/logger/winston';
+import { IMongoClient } from './inrfastructure/database/mongo/interface';
+import MongoClient from './inrfastructure/database/mongo/client';
 
 export const container = new Container();
 
 // Infrastructure
 container.bind<IServer>(TYPES.Server).to(ExpressServer);
 container.bind<IWinstonLogger>(TYPES.WinstonLogger).to(WinstonLogger);
+container.bind<IMongoClient>(TYPES.MongoClient).to(MongoClient);
 
 // Common
 container.bind<IApiResponse>(TYPES.ApiResponse).to(ApiResponse);

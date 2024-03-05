@@ -2,14 +2,14 @@ import { PrismaClient } from '@prisma/client';
 import { container } from './container';
 import { IServer } from './inrfastructure/server/interface';
 import { TYPES } from './type';
+import { IMongoClient } from './inrfastructure/database/mongo/interface';
 
 const server: IServer = container.get(TYPES.Server);
-const prisma = new PrismaClient();
+const mongoClient: IMongoClient = container.get(TYPES.MongoClient)
 
 const start = async () => {
   try {
-    await prisma.$connect();
-    console.log('============== Mongo connected ==============')
+    await mongoClient.init();
     server.setServer();
     server.start('3001');
   } catch (error) {
@@ -21,11 +21,9 @@ start();
 
 process
   .once('SIGTERM', async () => {
-    await prisma.$disconnect();
-    console.log('============== Mongo disconnected ==============')
-    server.exit;
+    await mongoClient.exit();
+    server.exit();
   }).once('SIGINT', async () => {
-    await prisma.$disconnect();
-    console.log('============== Mongo disconnected ==============')
-    server.exit;
+    await mongoClient.exit();
+    server.exit();
   });
