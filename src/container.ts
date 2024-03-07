@@ -7,6 +7,7 @@ import { IApiResponse } from './domain/common/interface';
 import { ApiResponse } from './domain/common';
 import { IHttpRouter } from './domain/interface';
 import * as Channel from './domain/channel';
+import * as Chat from './domain/chat';
 import * as Server from './domain/server';
 import * as User from './domain/user';
 import { IChannelService } from './domain/channel/interface';
@@ -16,6 +17,7 @@ import { IMongoClient } from './inrfastructure/database/mongo/interface';
 import MongoClient from './inrfastructure/database/mongo/client';
 import { IServerService } from './domain/server/interface';
 import { IUserService } from './domain/user/interface';
+import { IChatService } from './domain/chat/interface';
 
 export const container = new Container();
 
@@ -28,7 +30,10 @@ container.bind<IMongoClient>(TYPES.MongoClient).to(MongoClient);
 container.bind<IApiResponse>(TYPES.ApiResponse).to(ApiResponse);
 
 // Domain
-container.bind<IHttpRouter>(TYPES.ChannelRouter).to(Channel.Router);
+container.bind<IHttpRouter>(TYPES.ChannelRouter).to(Chat.Router);
+container.bind<IChatService>(TYPES.ChatService).to(Chat.Service);
+
+container.bind<IHttpRouter>(TYPES.ChatRouter).to(Chat.Router);
 container.bind<IChannelService>(TYPES.ChannelService).to(Channel.Service);
 
 container.bind<IHttpRouter>(TYPES.ServerRouter).to(Server.Router);

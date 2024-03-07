@@ -29,6 +29,14 @@ export default class UserRouter implements IHttpRouter {
       })
     })
 
+    // Signin
+    this.router.get('/', async (request, response, next) => {
+      this.apiResponse.generateResponse(request, response, next, async () => {
+        const { email, password } = request.body;
+        return await this.userService.signin(email, password);
+      })
+    })
+
     // Delete user
     this.router.delete('/:userId', async (request, response, next) => {
       this.apiResponse.generateResponse(request, response, next, async () => {

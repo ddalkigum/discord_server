@@ -11,9 +11,12 @@ export const TYPES = {
   ChannelRouter: Symbol.for('ChannelRouter'),
   ChannelService: Symbol.for('ChannelService'),
 
+  ChatRouter: Symbol.for('ChatRouter'),
+  ChatService: Symbol.for('ChatService'),
+
   ServerRouter: Symbol.for('ServerRouter'),
   ServerService: Symbol.for('ServerService'),
 
   UserRouter: Symbol.for('UserRouter'),
-  UserService: Symbol.for('UserService')
+  UserService: Symbol.for('UserService'),
 }
