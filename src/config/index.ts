@@ -3,10 +3,11 @@ import dotenv from 'dotenv';
 const NODE_ENV = process.env.NODE_ENV;
 
 const getPath = (environment: string) => {
-  if (environment === 'production') return '.env';
-  if (environment === 'development') return '.env.dev';
-  if (environment === 'test') return '.env.test';
-  throw new Error('Environment is incorrect defined')
+  environment = environment.trim();
+  if (environment == 'production') return '.env';
+  if (environment == 'development') return '.env.dev';
+  if (environment == 'test') return '.env.test';
+  throw new Error(`Environment is incorrect defined, environment: ${NODE_ENV}`)
 }
 
 const envPath = getPath(NODE_ENV);

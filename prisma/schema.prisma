@@ -80,7 +80,7 @@ model Chat {
 }
 
 model Auth {
-  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  id           String @id @default(uuid()) @map("_id")
   user         User   @relation(fields: [userId], references: [id])
   userId       String @unique @db.ObjectId
   accessToken  String

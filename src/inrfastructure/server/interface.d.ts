@@ -1,8 +1,9 @@
 import http from 'http';
 import { Application } from 'express';
 
-export interface IServer {
+export interface IExpressServer {
   getApp: () => Application;
+  getServer: () => http.Server;
   setServer: () => void;
   start: (port: string) => void;
   exit: () => void;

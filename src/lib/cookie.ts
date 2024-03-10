@@ -2,14 +2,14 @@ import { Response } from 'express';
 import * as config from '../config';
 
 export const setCookie = (response: Response, accessToken: string, refreshToken?: string) => {
-  response.cookie('accessToken', {
+  response.cookie('accessToken', accessToken, {
     domain: config.Server.baseUrl,
     httpOnly: true,
     maxAge: config.Auth.maxAge.accessToken
   })
 
   if (refreshToken) {
-    response.cookie('refreshToken', {
+    response.cookie('refreshToken', refreshToken, {
       domain: config.Server.baseUrl,
       httpOnly: true,
       maxAge: config.Auth.maxAge.refreshToken

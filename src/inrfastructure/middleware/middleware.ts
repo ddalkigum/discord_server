@@ -7,7 +7,7 @@ import { generateAccessToken, verifyToken } from '../../lib/jwt';
 import * as config from '../../config';
 import { setCookie, unsetCookie } from '../../lib/cookie';
 
-interface IMiddleware {
+export interface IMiddleware {
   authorization: (request: Request, response: Response, next: NextFunction) => Promise<void>;
 }
 
@@ -27,7 +27,6 @@ export default class Middleware implements IMiddleware {
         }
       }
 
-      // 리프레쉬 토큰 만료
       if (!refreshToken) {
         const error = ErrorGenerator.unAuthorized('TokenRequired');
         throw error;

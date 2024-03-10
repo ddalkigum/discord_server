@@ -15,33 +15,32 @@ export default class ChatRouter implements IHttpRouter {
   private router = Router();
 
   public init = () => {
+    this.router.post('/send/:serverId/:channelId', async (request, response, next) => {
+      this.apiResponse.generateResponse(request, response, next, async () => {
+        const { serverId, channelId } = request.params;
+        const { senderId, content } = request.body;
+        const schema = Joi.object({
+          serverId: Joi.string().required(),
+          channelId: Joi.string().required(),
+          senderId: Joi.string().required(),
+          content: Joi.string().required(),
+        })
+
+        validateContext({ serverId, channelId, senderId, content }, schema);
+        return await this.chatService.sendChat(serverId, channelId, senderId, content);
+      })
+    })
     // GET channel chat history
-    this.router.get('/:serverId/:channelId', async (request, response, next) => {
+    this.router.get('/history/:serverId/:channelId', async (request, response, next) => {
       this.apiResponse.generateResponse(request, response, next, async () => {
         const { serverId, channelId } = request.params;
         const schema = Joi.object({
           serverId: Joi.string().required(),
-          channelId: Joi.string().required()
+          channelId: Joi.string().required(),
         })
 
         validateContext({ serverId, channelId }, schema);
         return await this.chatService.getChatHistory(serverId, channelId);
-      })
-    })
-
-    this.router.post('/:serverId/:channelId', async (request, response, next) => {
-      this.apiResponse.generateResponse(request, response, next, async () => {
-        const { serverId, channelId } = request.params;
-        const { content, userId } = request.body;
-        const schema = Joi.object({
-          serverId: Joi.string().required(),
-          channelId: Joi.string().required(),
-          content: Joi.string().required(),
-          userId: Joi.string().required()
-        })
-
-        validateContext({ serverId, channelId, content, userId }, schema);
-        return await this.chatService.sendChat(serverId, channelId, userId, content);
       })
     })
   }

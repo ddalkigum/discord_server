@@ -1,13 +1,18 @@
 export const TYPES = {
   // Infrastructure
-  Server: Symbol.for('Server'),
+  ExpressServer: Symbol.for('ExpressServer'),
   WinstonLogger: Symbol.for('WinstonLogger'),
-  MongoClient: Symbol.for("MongoClient"),
+  MongoClient: Symbol.for('MongoClient'),
+  Middleware: Symbol.for('Middleware'),
+  SocketServer: Symbol.for('SocketServer'),
 
   // Common
   ApiResponse: Symbol.for('ApiResponse'),
 
   // Domain
+  AuthRouter: Symbol.for('AuthRouter'),
+  AuthService: Symbol.for('AuthService'),
+
   ChannelRouter: Symbol.for('ChannelRouter'),
   ChannelService: Symbol.for('ChannelService'),
 

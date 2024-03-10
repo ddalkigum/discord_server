@@ -15,6 +15,20 @@ export default class ChannelRouter implements IHttpRouter {
   private router = Router();
 
   public init = () => {
+    // connect
+    this.router.get('/connect/:serverId/:channelId', async (request, response, next) => {
+      this.apiResponse.generateResponse(request, response, next, async () => {
+        const { serverId, channelId } = request.params;
+        const schema = Joi.object({
+          serverId: Joi.string().required(),
+          channelId: Joi.string().required(),
+        })
+
+        validateContext({ serverId, channelId }, schema);
+        return this.channelService.connectChannel(serverId, channelId);
+      })
+    })
+
     // GET all channel
     this.router.get('/:serverId', async (request, response, next) => {
       this.apiResponse.generateResponse(request, response, next, async () => {
