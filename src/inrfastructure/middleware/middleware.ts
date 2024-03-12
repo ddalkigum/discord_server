@@ -18,7 +18,6 @@ export default class Middleware implements IMiddleware {
   public authorization = async (request: Request, response: Response, next: NextFunction) => {
     try {
       const { accessToken, refreshToken } = request.cookies;
-      // 로그인 후 1시간 이내
       if (accessToken) {
         const { userId, isExpired } = verifyToken(accessToken);
         if (!isExpired) {

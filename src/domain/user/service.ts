@@ -12,7 +12,16 @@ export default class UserService implements IUserService {
 
   public getUser = async (userId: string) => {
     const client = this.mongoClient.getClient();
-    return await client.user.findUnique({ where: { id: userId } });
+    const foundUser = await client.user.findUnique({ where: { id: userId } });
+
+    if (!foundUser) throw ErrorGenerator.badRequest('Does not exist user');
+
+    return {
+      id: foundUser.id,
+      email: foundUser.email,
+      nickname: foundUser.nickname,
+      createdAt: foundUser.createdAt,
+    }
   }
 
   public createUser = async (email: string, password: string, nickname: string) => {

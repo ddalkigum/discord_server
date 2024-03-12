@@ -4,28 +4,38 @@ import { TYPES } from '../../type';
 import { IApiResponse } from '../common/interface';
 import { Router } from 'express';
 import { IServerService } from './interface';
+import { IMiddleware } from '../../inrfastructure/middleware/middleware';
+import Joi from 'joi';
+import { validateContext } from '../../lib/validate';
 
 @injectable()
 export default class ServerRouter implements IHttpRouter {
   @inject(TYPES.ApiResponse) private apiResponse: IApiResponse;
+  @inject(TYPES.Middleware) private middleware: IMiddleware;
   @inject(TYPES.ServerService) private serverService: IServerService;
 
   private router = Router();
 
   public init = () => {
     // Get participate server
-    this.router.get('/:userId', async (request, response, next) => {
+    this.router.get('/', this.middleware.authorization, async (request, response, next) => {
       this.apiResponse.generateResponse(request, response, next, async () => {
-        const userId = request.query.userId as string;
+        const { userId } = request.body
         return await this.serverService.getParticipateServer(userId);
       })
     })
 
     // Create Server
-    this.router.post('/:userId', async (request, response, next) => {
+    this.router.post('/', this.middleware.authorization, async (request, response, next) => {
       this.apiResponse.generateResponse(request, response, next, async () => {
-        const userId = request.query.userId as string;
-        const { serverName, serverType } = request.body;
+        const { serverName, serverType, userId } = request.body;
+
+        const schema = Joi.object({
+          serverName: Joi.string().required(),
+          serverType: Joi.string().required()
+        })
+
+        validateContext({ serverName, serverType }, schema);
         return await this.serverService.createServer(userId, serverName, serverType);
       })
     })

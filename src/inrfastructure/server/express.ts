@@ -12,16 +12,17 @@ import { IHttpRouter } from '../../domain/interface';
 import socketIo from 'socket.io';
 import { ISocketServer } from './socket';
 import { checkPassword, encrypt } from '../../lib/hash';
+import { IApiResponse } from '../../domain/common/interface';
 
 @injectable()
 export default class ExpressServer implements IExpressServer {
   @inject(TYPES.WinstonLogger) private logger: IWinstonLogger;
+  @inject(TYPES.ApiResponse) private apiResponse: IApiResponse;
   @inject(TYPES.ServerRouter) private serverRouter: IHttpRouter;
   @inject(TYPES.UserRouter) private userRouter: IHttpRouter;
   @inject(TYPES.ChatRouter) private chatRouter: IHttpRouter;
   @inject(TYPES.ChannelRouter) private channelRouter: IHttpRouter;
   @inject(TYPES.AuthRouter) private authRouter: IHttpRouter;
-  @inject(TYPES.SocketServer) private socketServer: ISocketServer;
 
   private app: express.Application;
   private server: http.Server;
@@ -62,8 +63,9 @@ export default class ExpressServer implements IExpressServer {
     this.app.use('/user', this.userRouter.getRouter());
     this.app.use('/channel', this.channelRouter.getRouter());
     this.app.use('/chat', this.chatRouter.getRouter());
-    // TODO: NotFound
-    // TODO: Error Handler
+
+    this.app.use(this.apiResponse.generateNotFound);
+    this.app.use(this.apiResponse.errorResponse);
   }
 
   public start = (port: string) => {

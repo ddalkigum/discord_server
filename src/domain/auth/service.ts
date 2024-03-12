@@ -8,7 +8,6 @@ import { checkPassword, encrypt } from '../../lib/hash';
 import ErrorGenerator from '../common/error';
 import { generateAccessToken, generateRefreshToken } from '../../lib/jwt';
 import * as config from '../../config';
-import { setCookie } from '../../lib/cookie';
 
 @injectable()
 export default class AuthService implements IAuthService {
@@ -20,7 +19,7 @@ export default class AuthService implements IAuthService {
     const client = this.mongoClient.getClient();
     const user = await client.user.findFirst({ where: { email } });
 
-    if (!user) throw ErrorGenerator.unAuthorized('Doesnot exist user');
+    if (!user) throw ErrorGenerator.unAuthorized('Does not exist user');
 
     const isCorrectPassword = await checkPassword(password, user.password);
     if (!isCorrectPassword) throw ErrorGenerator.unAuthorized('Incorrect password');
@@ -46,6 +45,10 @@ export default class AuthService implements IAuthService {
   public signup = async (email: string, password: string, nickname: string) => {
     this.logger.debug(`AuthService > signup, email: ${email}, password: ${password}, nickname: ${nickname}`);
     const client = this.mongoClient.getClient();
+    const foundUser = await client.user.findFirst({ where: { email } });
+
+    if (foundUser) throw ErrorGenerator.badRequest('Already exist user');
+
     const hashedPassword = await encrypt(password);
     const user = await client.user.create({ data: { email, password: hashedPassword, nickname, createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000) } });
 

@@ -5,8 +5,8 @@ export const validateContext = (context: any, schema: Joi.Schema) => {
   const validation = schema.validate(context);
 
   if (validation.error) {
-    const errorMessage = validation.error.details[0]?.message;
-    const error = ErrorGenerator.badRequest(JSON.stringify(errorMessage));
+    const errorMessage = validation.error.message.replaceAll(/['"\\]+/g, '')
+    const error = ErrorGenerator.badRequest(errorMessage);
     throw error;
   }
 }

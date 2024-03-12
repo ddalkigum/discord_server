@@ -27,10 +27,13 @@ export default class ApiResponse implements IApiResponse {
   }
 
   public errorResponse = async (error: BaseError | Error, request: Request, response: Response, next: NextFunction) => {
+    this.logger.debug(error.stack);
+    // 예측 가능 에러
     if (error instanceof BaseError) {
       this.logger.warn(error);
     } else {
       error['statusCode'] = 500;
+      this.logger.error(`name: ${error.name} message: ${error.message}, stack: ${JSON.stringify(error?.stack)}`)
     }
 
     response.status(error['statusCode']).json({
