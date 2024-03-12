@@ -12,9 +12,7 @@ export default class ServerService implements IServerService {
   public getParticipateServer = async (userId: string) => {
     this.logger.debug(`ServerService > getParticipateServer, userId: ${userId}`)
     const client = this.mongoClient.getClient()
-    const result = await client.participate.findMany({ where: { userId }, include: { server: true } });
-    console.log(result);
-    return result;
+    return await client.participate.findMany({ where: { userId }, include: { server: true } });
   };
 
   public participateServer = async (userId: string, serverId: string) => {
