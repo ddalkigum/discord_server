@@ -53,9 +53,9 @@ export default class ChatService implements IChatService {
     })
   }
 
-  public connectChatRoom = (roomId: string, userId: string) => {
+  public connectChatRoom = async (roomId: string) => {
     this.logger.debug(`ChatService > connectChatRoom, roomId: ${roomId}`);
-    this.socketServer.connectRoom(roomId, userId);
+    await this.socketServer.connectRoom(roomId);
   }
 
   public getChatHistoryOnRoom = async (roomId: string) => {
@@ -64,8 +64,12 @@ export default class ChatService implements IChatService {
     return await client.chatRoomChat.findMany({ where: { chatRoomId: roomId } });
   }
 
-  public disconnectChatRoom = (roomId: string) => {
+  public disconnectChatRoom = async (roomId: string) => {
     this.logger.debug(`ChatService > disconnectChatRoom, roomId: ${roomId}`);
-    this.socketServer.disconnectRoom(roomId);
+    await this.socketServer.disconnectRoom(roomId);
   }
+
+  public sendMessageToRoom = async (roomId: string, senderId: string, content: string) => {
+    await this.socketServer.sendMessageToRoom(roomId, senderId, content);
+  };
 }

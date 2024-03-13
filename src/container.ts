@@ -22,6 +22,7 @@ import { IChatService } from './domain/chat/interface';
 import Middleware, { IMiddleware } from './inrfastructure/middleware/middleware';
 import SocketServer, { ISocketServer } from './inrfastructure/server/socket';
 import { IAuthService } from './domain/auth/interface';
+import RedisClient, { IRedisClient } from './inrfastructure/database/redis/client';
 
 export const container = new Container({ defaultScope: 'Singleton' });
 
@@ -31,6 +32,7 @@ container.bind<IWinstonLogger>(TYPES.WinstonLogger).to(WinstonLogger);
 container.bind<IMongoClient>(TYPES.MongoClient).to(MongoClient);
 container.bind<IMiddleware>(TYPES.Middleware).to(Middleware);
 container.bind<ISocketServer>(TYPES.SocketServer).to(SocketServer);
+container.bind<IRedisClient>(TYPES.RedisClient).to(RedisClient);
 // Common
 container.bind<IApiResponse>(TYPES.ApiResponse).to(ApiResponse);
 

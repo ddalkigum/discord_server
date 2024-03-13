@@ -88,8 +88,8 @@ export default class ChatRouter implements IHttpRouter {
         })
 
         validateContext({ roomId, userId }, schema);
-        this.chatService.connectChatRoom(roomId, userId);
-        return await this.chatService.getChatHistoryOnRoom(userId);
+        await this.chatService.connectChatRoom(roomId);
+        return await this.chatService.getChatHistoryOnRoom(roomId);
       })
     })
 
@@ -101,7 +101,22 @@ export default class ChatRouter implements IHttpRouter {
         })
 
         validateContext({ roomId }, schema);
-        this.chatService.disconnectChatRoom(roomId);
+        await this.chatService.disconnectChatRoom(roomId);
+        return 'Success'
+      })
+    })
+
+    this.router.post('/room/send/:roomId', this.middleware.authorization, async (request, response, next) => {
+      this.apiResponse.generateResponse(request, response, next, async () => {
+        const { roomId } = request.params;
+        const { userId, content } = request.body;
+        const schema = Joi.object({
+          roomId: Joi.string().required(),
+          content: Joi.string().required(),
+        })
+
+        validateContext({ roomId, content }, schema);
+        await this.chatService.sendMessageToRoom(roomId, userId, content);
         return 'Success'
       })
     })
