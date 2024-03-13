@@ -4,6 +4,7 @@ import { Server } from 'socket.io';
 import { IWinstonLogger } from '../logger/interface';
 import { Server as httpServer } from 'http';
 import { IMongoClient } from '../database/mongo/interface';
+import { IRedisClient } from '../database/redis/client';
 
 export interface ISocketServer {
   init: (server: httpServer) => void;
@@ -11,13 +12,15 @@ export interface ISocketServer {
   connectChannel: (serverId: string, channelId: string) => void;
   disconnectChannel: (serverId: string, channelId: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
-  connectRoom: (roomId: string, userId: string) => void;
-  disconnectRoom: (roomId: string) => void;
+  connectRoom: (roomId: string) => Promise<void>;
+  disconnectRoom: (roomId: string) => Promise<void>;
+  sendMessageToRoom: (roomId: string, senderId: string, content: string) => Promise<void>;
 }
 
 @injectable()
 export default class SocketServer implements ISocketServer {
   @inject(TYPES.WinstonLogger) private logger: IWinstonLogger;
+  @inject(TYPES.RedisClient) private redisClient: IRedisClient;
   @inject(TYPES.MongoClient) private mongoClient: IMongoClient;
 
   private io: Server;
@@ -54,38 +57,34 @@ export default class SocketServer implements ISocketServer {
 
   public sendMessage = (serverId: string, channelId: string, content: string) => {
     this.logger.debug(`SocketServer > sendMessage, serverId: ${serverId}, channelId: ${channelId}`);
-    const channel = this.io.of(`/${serverId}/${channelId}`);
-    channel.emit('chatMessage', content);
+    const client = this.redisClient.getClient();
   }
 
-  public connectRoom = (roomId: string, userId: string) => {
+  public connectRoom = async (roomId: string) => {
     this.logger.debug(`SocketService > connectRoom, roomId: ${roomId}`);
 
-    const room = this.io.of(`/${roomId}`);
-    let socketId;
+    const client = this.redisClient.getSubscriber();
+    await client.subscribe(roomId, (error, count) => {
+      this.logger.debug(`Total subscriber: ${count}`);
+    });
 
-    room.on('connection', (socket) => {
-      this.logger.debug('===== connection =====')
-      socket.on('connectData', (data) => {
-        socketId = data;
-      })
+    client.on('connect', () => {
+      this.logger.debug(`Subscribe complete!`)
+    })
 
-      socket.on(`/${roomId}-message`, async (message) => {
-        this.logger.debug(`message: ${message}`);
-        // const client = this.mongoClient.getClient();
-        // await client.chatRoomChat.create({ data: { senderId: userId, chatRoomId: roomId, createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000) } })
-        socket.emit(`/${roomId}-message`, message)
-      })
-
-      socket.on('disconnect', () => {
-        this.logger.debug('===== User disconnect =====')
-        socket.disconnect(true);
-      })
+    client.on(roomId, (channel, message) => {
+      this.logger.debug(`On message, channel: ${channel}, message: ${message}`);
     })
   }
 
-  public disconnectRoom = (roomId: string) => {
-    const room = this.io.of(`/${roomId}`);
-    room.disconnectSockets(true);
+  public disconnectRoom = async (roomId: string) => {
+    await this.redisClient.getSubscriber().unsubscribe(roomId);
   };
+
+  public sendMessageToRoom = async (roomId: string, senderId: string, content: string) => {
+    this.logger.debug(`SocketService > sendMessageToRoom, roomId: ${roomId}, senderId: ${senderId}, content: ${content}`)
+    const message = { senderId, content };
+    this.io.emit(roomId, message)
+    await this.redisClient.getClient().publish(roomId, JSON.stringify(message));
+  }
 }

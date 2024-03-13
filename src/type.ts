@@ -5,6 +5,7 @@ export const TYPES = {
   MongoClient: Symbol.for('MongoClient'),
   Middleware: Symbol.for('Middleware'),
   SocketServer: Symbol.for('SocketServer'),
+  RedisClient: Symbol.for('RedisClient'),
 
   // Common
   ApiResponse: Symbol.for('ApiResponse'),

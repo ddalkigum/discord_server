@@ -10,7 +10,8 @@ export interface IChatService {
   getChatHistory: (serverId: string, channelId: string) => Promise<Chat[]>;
   createChatRoom: (userId: string, participateId: string) => Promise<any>;
   getChatRoomList: (userId: string) => Promise<IGetChatRoomList[]>;
-  connectChatRoom: (roomId: string, userId: string) => void;
+  connectChatRoom: (roomId: string) => Promise<void>;
   getChatHistoryOnRoom: (roomId: string) => Promise<ChatRoomChat[]>;
-  disconnectChatRoom: (roomId: string) => void;
+  disconnectChatRoom: (roomId: string) => Promise<void>;
+  sendMessageToRoom: (roomId: string, senderId: string, content: string) => Promise<void>;
 }
