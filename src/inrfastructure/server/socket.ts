@@ -64,17 +64,19 @@ export default class SocketServer implements ISocketServer {
   public connectRoom = async (roomId: string) => {
     this.logger.debug(`SocketService > connectRoom, roomId: ${roomId}`);
 
-    const client = this.redisClient.getSubscriber();
-    await client.subscribe(roomId, (error, count) => {
+    const subscriber = this.redisClient.getSubscriber();
+
+    await subscriber.subscribe(roomId, (error, count) => {
       this.logger.debug(`Total subscriber: ${count}`);
     });
 
-    client.on('connect', () => {
+    subscriber.on('connect', () => {
       this.logger.debug(`Subscribe complete!`)
     })
 
-    client.on(roomId, (channel, message) => {
+    subscriber.on('message', (channel, message) => {
       this.logger.debug(`On message, channel: ${channel}, message: ${message}`);
+      this.io.emit(roomId, JSON.parse(message));
     })
   }
 
@@ -84,7 +86,6 @@ export default class SocketServer implements ISocketServer {
 
   public sendMessageToRoom = async (roomId: string, chat: ChatRoomChat, sender: User) => {
     this.logger.debug(`SocketService > sendMessageToRoom, roomId: ${roomId}, chat: ${JSON.stringify(chat)}`);
-    this.io.emit(roomId, { ...chat, sender })
-    await this.redisClient.getClient().publish(roomId, JSON.stringify(chat));
+    await this.redisClient.getClient().publish(roomId, JSON.stringify({ ...chat, sender }));
   }
 }

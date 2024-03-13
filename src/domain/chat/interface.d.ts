@@ -5,7 +5,7 @@ type IGetChatRoomList = {
   participantNicknameList: String[]
 }
 
-export interface IChatService {
+export default interface IChatService {
   sendChat: (serverId: string, channelId: string, senderId: string, content: string) => Promise<void>;
   getChatHistory: (serverId: string, channelId: string) => Promise<Chat[]>;
   createChatRoom: (userId: string, participateId: string) => Promise<any>;

@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { IUserService } from './interface';
+import IUserService from './interface';
 import { TYPES } from '../../type';
 import { IWinstonLogger } from '../../inrfastructure/logger/interface';
 import { IMongoClient } from '../../inrfastructure/database/mongo/interface';

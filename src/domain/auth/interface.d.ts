@@ -8,7 +8,7 @@ interface UserLoginResult {
   }
 }
 
-export interface IAuthService {
+export default interface IAuthService {
   login: (id: string, password: string) => Promise<UserLoginResult>;
   signup: (id: string, password: string, nickname: string) => Promise<UserLoginResult>;
 }

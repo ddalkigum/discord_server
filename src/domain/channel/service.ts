@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { IChannelService } from './interface';
+import IChannelService from './interface';
 import { TYPES } from '../../type';
 import { IMongoClient } from '../../inrfastructure/database/mongo/interface';
 import { ISocketServer } from '../../inrfastructure/server/socket';

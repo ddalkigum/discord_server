@@ -5,7 +5,7 @@ import { IApiResponse } from '../common/interface';
 import { Router } from 'express';
 import Joi from 'joi';
 import { validateContext } from '../../lib/validate';
-import { IChannelService } from './interface';
+import IChannelService from './interface';
 
 @injectable()
 export default class ChannelRouter implements IHttpRouter {

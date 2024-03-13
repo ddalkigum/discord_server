@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify';
-import { IServerService, ServerType } from './interface';
 import { TYPES } from '../../type';
 import { IMongoClient } from '../../inrfastructure/database/mongo/interface';
 import { IWinstonLogger } from '../../inrfastructure/logger/interface';
+import IServerService, { ServerType } from './interface';
 
 @injectable()
 export default class ServerService implements IServerService {

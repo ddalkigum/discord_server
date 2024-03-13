@@ -3,10 +3,10 @@ import { IHttpRouter } from '../interface';
 import { TYPES } from '../../type';
 import { IApiResponse } from '../common/interface';
 import { Router } from 'express';
-import { IServerService } from './interface';
 import { IMiddleware } from '../../inrfastructure/middleware/middleware';
 import Joi from 'joi';
 import { validateContext } from '../../lib/validate';
+import IServerService from './interface';
 
 @injectable()
 export default class ServerRouter implements IHttpRouter {

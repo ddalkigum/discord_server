@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { IChatService } from './interface';
+import IChatService from './interface';
 import { TYPES } from '../../type';
 import { IMongoClient } from '../../inrfastructure/database/mongo/interface';
 import { IWinstonLogger } from '../../inrfastructure/logger/interface';

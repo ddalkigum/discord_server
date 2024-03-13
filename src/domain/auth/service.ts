@@ -1,6 +1,5 @@
 import { inject, injectable } from 'inversify';
 import { v4 as uuidv4 } from 'uuid';
-import { IAuthService } from './interface';
 import { TYPES } from '../../type';
 import { IWinstonLogger } from '../../inrfastructure/logger/interface';
 import { IMongoClient } from '../../inrfastructure/database/mongo/interface';
@@ -8,6 +7,7 @@ import { checkPassword, encrypt } from '../../lib/hash';
 import ErrorGenerator from '../common/error';
 import { generateAccessToken, generateRefreshToken } from '../../lib/jwt';
 import * as config from '../../config';
+import IAuthService from './interface';
 
 @injectable()
 export default class AuthService implements IAuthService {

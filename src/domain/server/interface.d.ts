@@ -1,8 +1,6 @@
-import { Participate } from '@prisma/client';
+export type ServerType = 'community' | 'friendship';
 
-type ServerType = 'community' | 'friendship';
-
-export interface IServerService {
+export default interface IServerService {
   getParticipateServer: (userId: string) => Promise<any>;
   participateServer: (userId: string, serverId: string) => Promise<void>;
   createServer: (userId: string, name: string, type: ServerType) => Promise<void>;
