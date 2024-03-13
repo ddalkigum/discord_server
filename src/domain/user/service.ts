@@ -24,17 +24,14 @@ export default class UserService implements IUserService {
     }
   }
 
-  public createUser = async (email: string, password: string, nickname: string) => {
+  public findUser = async (nickname: string) => {
+    this.logger.debug(`UserService > findUser, nickname: ${nickname}`)
     const client = this.mongoClient.getClient();
-    await client.user.create({ data: { email, password, nickname, createdAt: new Date(Date.now()) } });
-  }
-
-  public signin = async (email: string, password: string) => {
-    const client = this.mongoClient.getClient();
-    const foundUser = await client.user.findFirst({ where: { email } });
-    if (foundUser.password !== password) throw ErrorGenerator.badRequest('Check password');
-
-    return foundUser;
+    const foundUserList = await client.user.findMany({
+      where: { nickname: { contains: nickname } },
+      select: { id: true, nickname: true, createdAt: true }
+    });
+    return foundUserList;
   }
 
   public deleteUser = async (userId: string) => {

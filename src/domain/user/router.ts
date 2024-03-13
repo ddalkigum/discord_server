@@ -4,36 +4,29 @@ import { TYPES } from '../../type';
 import { IApiResponse } from '../common/interface';
 import { Router } from 'express';
 import { IUserService } from './interface';
+import { IMiddleware } from '../../inrfastructure/middleware/middleware';
 
 @injectable()
 export default class UserRouter implements IHttpRouter {
   @inject(TYPES.ApiResponse) private apiResponse: IApiResponse;
+  @inject(TYPES.Middleware) private middleware: IMiddleware;
   @inject(TYPES.UserService) private userService: IUserService;
 
   private router = Router();
 
   public init = () => {
     // Get user information
-    this.router.get('/:userId', async (request, response, next) => {
+    this.router.get('/', this.middleware.authorization, async (request, response, next) => {
       this.apiResponse.generateResponse(request, response, next, async () => {
-        const userId = request.params.userId as string;
+        const { userId } = request.body;
         return await this.userService.getUser(userId);
       })
     })
 
-    // Create user
-    this.router.post('/', async (request, response, next) => {
+    this.router.get('/search', this.middleware.authorization, async (request, response, next) => {
       this.apiResponse.generateResponse(request, response, next, async () => {
-        const { email, password, nickname } = request.body;
-        return await this.userService.createUser(email, password, nickname);
-      })
-    })
-
-    // Signin
-    this.router.get('/', async (request, response, next) => {
-      this.apiResponse.generateResponse(request, response, next, async () => {
-        const { email, password } = request.body;
-        return await this.userService.signin(email, password);
+        const keyword = request.query;
+        return await this.userService.findUser(keyword.q as string);
       })
     })
 

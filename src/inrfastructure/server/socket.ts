@@ -3,6 +3,7 @@ import { TYPES } from '../../type';
 import { Server } from 'socket.io';
 import { IWinstonLogger } from '../logger/interface';
 import { Server as httpServer } from 'http';
+import { IMongoClient } from '../database/mongo/interface';
 
 export interface ISocketServer {
   init: (server: httpServer) => void;
@@ -10,11 +11,14 @@ export interface ISocketServer {
   connectChannel: (serverId: string, channelId: string) => void;
   disconnectChannel: (serverId: string, channelId: string) => void;
   sendMessage: (serverId: string, channelId: string, content: string) => void;
+  connectRoom: (roomId: string, userId: string) => void;
+  disconnectRoom: (roomId: string) => void;
 }
 
 @injectable()
 export default class SocketServer implements ISocketServer {
   @inject(TYPES.WinstonLogger) private logger: IWinstonLogger;
+  @inject(TYPES.MongoClient) private mongoClient: IMongoClient;
 
   private io: Server;
 
@@ -28,9 +32,6 @@ export default class SocketServer implements ISocketServer {
       }
     });
     this.logger.info(`Socket server on`);
-    this.io.on('connection', () => {
-      this.logger.debug(`Socket connection detect`)
-    })
   }
 
   public getIo = () => {
@@ -56,4 +57,35 @@ export default class SocketServer implements ISocketServer {
     const channel = this.io.of(`/${serverId}/${channelId}`);
     channel.emit('chatMessage', content);
   }
+
+  public connectRoom = (roomId: string, userId: string) => {
+    this.logger.debug(`SocketService > connectRoom, roomId: ${roomId}`);
+
+    const room = this.io.of(`/${roomId}`);
+    let socketId;
+
+    room.on('connection', (socket) => {
+      this.logger.debug('===== connection =====')
+      socket.on('connectData', (data) => {
+        socketId = data;
+      })
+
+      socket.on(`/${roomId}-message`, async (message) => {
+        this.logger.debug(`message: ${message}`);
+        // const client = this.mongoClient.getClient();
+        // await client.chatRoomChat.create({ data: { senderId: userId, chatRoomId: roomId, createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000) } })
+        socket.emit(`/${roomId}-message`, message)
+      })
+
+      socket.on('disconnect', () => {
+        this.logger.debug('===== User disconnect =====')
+        socket.disconnect(true);
+      })
+    })
+  }
+
+  public disconnectRoom = (roomId: string) => {
+    const room = this.io.of(`/${roomId}`);
+    room.disconnectSockets(true);
+  };
 }
