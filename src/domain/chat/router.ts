@@ -116,8 +116,19 @@ export default class ChatRouter implements IHttpRouter {
         })
 
         validateContext({ roomId, content }, schema);
-        await this.chatService.sendMessageToRoom(roomId, userId, content);
-        return 'Success'
+        return await this.chatService.sendMessageToRoom(roomId, userId, content);
+      })
+    })
+
+    this.router.get('/room/user/:roomId', this.middleware.authorization, async (request, response, next) => {
+      this.apiResponse.generateResponse(request, response, next, async () => {
+        const { roomId } = request.params;
+        const schema = Joi.object({
+          roomId: Joi.string().required(),
+        })
+
+        validateContext({ roomId }, schema);
+        return await this.chatService.getRoomUser(roomId);
       })
     })
   }

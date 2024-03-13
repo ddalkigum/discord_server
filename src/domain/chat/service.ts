@@ -61,7 +61,8 @@ export default class ChatService implements IChatService {
   public getChatHistoryOnRoom = async (roomId: string) => {
     this.logger.debug(`ChatService > getChatHistoryOnRoom, roomId: ${roomId}`);
     const client = this.mongoClient.getClient();
-    return await client.chatRoomChat.findMany({ where: { chatRoomId: roomId } });
+
+    return await client.chatRoomChat.findMany({ where: { chatRoomId: roomId }, include: { sender: true } });
   }
 
   public disconnectChatRoom = async (roomId: string) => {
@@ -70,6 +71,30 @@ export default class ChatService implements IChatService {
   }
 
   public sendMessageToRoom = async (roomId: string, senderId: string, content: string) => {
-    await this.socketServer.sendMessageToRoom(roomId, senderId, content);
+    const client = this.mongoClient.getClient();
+    const sender = await client.user.findFirst({ where: { id: senderId } });
+
+    const newChat = await client.chatRoomChat.create({
+      data: {
+        chatRoomId: roomId,
+        senderNickname: sender.nickname,
+        senderId,
+        content,
+        createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000),
+      }
+    })
+    await this.socketServer.sendMessageToRoom(roomId, newChat, sender);
+
+    return { ...newChat, sender };
   };
+
+  public getRoomUser = async (roomId: string) => {
+    const client = this.mongoClient.getClient();
+    return await client.chatRoomParticipant.findMany({
+      where: {
+        chatRoomId: roomId
+      },
+      include: { user: true }
+    })
+  }
 }

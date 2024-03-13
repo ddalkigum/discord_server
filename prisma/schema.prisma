@@ -107,12 +107,14 @@ model ChatRoomParticipant {
 }
 
 model ChatRoomChat {
-  id         String    @id @default(auto()) @map("_id") @db.ObjectId
-  sender     User      @relation(fields: [senderId], references: [id])
-  senderId   String    @db.ObjectId
-  chatRoom   ChatRoom  @relation(fields: [chatRoomId], references: [id])
-  chatRoomId String    @db.ObjectId
-  createdAt  DateTime
-  updatedAt  DateTime?
-  deletedAt  DateTime?
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  content        String
+  senderNickname String
+  sender         User      @relation(fields: [senderId], references: [id])
+  senderId       String    @db.ObjectId
+  chatRoom       ChatRoom  @relation(fields: [chatRoomId], references: [id])
+  chatRoomId     String    @db.ObjectId
+  createdAt      DateTime
+  updatedAt      DateTime?
+  deletedAt      DateTime?
 }

@@ -5,6 +5,7 @@ import { IWinstonLogger } from '../logger/interface';
 import { Server as httpServer } from 'http';
 import { IMongoClient } from '../database/mongo/interface';
 import { IRedisClient } from '../database/redis/client';
+import { ChatRoomChat, User } from '@prisma/client';
 
 export interface ISocketServer {
   init: (server: httpServer) => void;
@@ -14,7 +15,7 @@ export interface ISocketServer {
   sendMessage: (serverId: string, channelId: string, content: string) => void;
   connectRoom: (roomId: string) => Promise<void>;
   disconnectRoom: (roomId: string) => Promise<void>;
-  sendMessageToRoom: (roomId: string, senderId: string, content: string) => Promise<void>;
+  sendMessageToRoom: (roomId: string, chat: ChatRoomChat, sender: User) => Promise<void>;
 }
 
 @injectable()
@@ -81,10 +82,9 @@ export default class SocketServer implements ISocketServer {
     await this.redisClient.getSubscriber().unsubscribe(roomId);
   };
 
-  public sendMessageToRoom = async (roomId: string, senderId: string, content: string) => {
-    this.logger.debug(`SocketService > sendMessageToRoom, roomId: ${roomId}, senderId: ${senderId}, content: ${content}`)
-    const message = { senderId, content };
-    this.io.emit(roomId, message)
-    await this.redisClient.getClient().publish(roomId, JSON.stringify(message));
+  public sendMessageToRoom = async (roomId: string, chat: ChatRoomChat, sender: User) => {
+    this.logger.debug(`SocketService > sendMessageToRoom, roomId: ${roomId}, chat: ${JSON.stringify(chat)}`);
+    this.io.emit(roomId, { ...chat, sender })
+    await this.redisClient.getClient().publish(roomId, JSON.stringify(chat));
   }
 }

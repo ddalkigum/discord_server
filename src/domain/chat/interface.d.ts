@@ -1,4 +1,4 @@
-import { Chat, ChatRoomChat, ChatRoomParticipant, User } from '@prisma/client';
+import { Chat, ChatRoom, ChatRoomChat, ChatRoomParticipant, User } from '@prisma/client';
 
 type IGetChatRoomList = {
   id: string,
@@ -13,5 +13,6 @@ export interface IChatService {
   connectChatRoom: (roomId: string) => Promise<void>;
   getChatHistoryOnRoom: (roomId: string) => Promise<ChatRoomChat[]>;
   disconnectChatRoom: (roomId: string) => Promise<void>;
-  sendMessageToRoom: (roomId: string, senderId: string, content: string) => Promise<void>;
+  sendMessageToRoom: (roomId: string, senderId: string, content: string) => Promise<ChatRoomChat>;
+  getRoomUser: (roomId: string) => Promise<ChatRoomParticipant[]>;
 }
