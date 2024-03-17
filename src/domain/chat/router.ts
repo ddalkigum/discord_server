@@ -3,10 +3,10 @@ import { IHttpRouter } from '../interface';
 import { TYPES } from '../../type';
 import { IApiResponse } from '../common/interface';
 import { Router } from 'express';
+import { IChatService } from './interface';
 import { validateContext } from '../../lib/validate';
 import Joi from 'joi';
 import { IMiddleware } from '../../inrfastructure/middleware/middleware';
-import IChatService from './interface';
 
 @injectable()
 export default class ChatRouter implements IHttpRouter {

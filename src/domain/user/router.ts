@@ -3,7 +3,7 @@ import { IHttpRouter } from '../interface';
 import { TYPES } from '../../type';
 import { IApiResponse } from '../common/interface';
 import { Router } from 'express';
-import IUserService from './interface';
+import { IUserService } from './interface';
 import { IMiddleware } from '../../inrfastructure/middleware/middleware';
 
 @injectable()

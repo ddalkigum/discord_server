@@ -5,10 +5,10 @@ import { IApiResponse } from '../common/interface';
 import { Router } from 'express';
 import Joi from 'joi';
 import { validateContext } from '../../lib/validate';
+import { IAuthService } from './interface';
 import { setCookie, unsetCookie } from '../../lib/cookie';
 import { IMiddleware } from '../../inrfastructure/middleware/middleware';
-import IUserService from '../user/interface';
-import IAuthService from './interface';
+import { IUserService } from '../user/interface';
 
 @injectable()
 export default class AuthRouter implements IHttpRouter {

@@ -1,7 +1,7 @@
 import { Channel } from '@prisma/client';
 import { ObjectId } from 'typeorm';
 
-export default interface IChannelService {
+export interface IChannelService {
   getAllChannel: (serverId: string) => Promise<Channel[]>;
   connectChannel: (serverId: string, channelId: string) => void;
   createChannel: (serverId: string, userId: string, type: string, channelName: string) => Promise<void>;
