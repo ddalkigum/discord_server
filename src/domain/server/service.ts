@@ -30,5 +30,13 @@ export default class ServerService implements IServerService {
 
   };
 
-
+  public getChannelListOnServer = async (serverId: string) => {
+    this.logger.debug(`ServerService > getChannelListOnServer, serverId: ${serverId}`)
+    const client = this.mongoClient.getClient();
+    return await client.channel.findMany({
+      where: {
+        serverId
+      }
+    })
+  }
 }

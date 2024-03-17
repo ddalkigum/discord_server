@@ -39,6 +39,19 @@ export default class ServerRouter implements IHttpRouter {
         return await this.serverService.createServer(userId, serverName, serverType);
       })
     })
+
+    this.router.get('/channel/:serverId', this.middleware.authorization, async (request, response, next) => {
+      this.apiResponse.generateResponse(request, response, next, async () => {
+        const { serverId } = request.params;
+
+        const schema = Joi.object({
+          serverId: Joi.string().required(),
+        })
+
+        validateContext({ serverId }, schema);
+        return await this.serverService.getChannelListOnServer(serverId);
+      })
+    })
   }
 
   public getRouter = () => {

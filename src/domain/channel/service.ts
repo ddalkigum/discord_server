@@ -16,9 +16,9 @@ export default class ChannelService implements IChannelService {
     return await client.channel.findMany({ where: { serverId } });
   }
 
-  public createChannel = async (serverId: string, userId: string, type: string = 'community', channelName: string) => {
+  public createChannel = async (serverId: string, channelName: string, ownerId: string) => {
     const client = this.mongoClient.getClient();
-    await client.channel.create({ data: { serverId, ownerId: userId, type, name: channelName, createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000) } });
+    await client.channel.create({ data: { serverId, ownerId, name: channelName, type: 'chan', createdAt: new Date(Date.now() + 9 * 60 * 60 * 1000) } });
   };
 
   public connectChannel = async (serverId: string, channelId: string) => {
